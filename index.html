@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12355b">
+<title>Spotter Sheet – Demo (sample data)</title>
+<style>
+:root{
+  --ink:#111827; --muted:#4b5563; --line:#d1d5db; --bg:#f3f5f8; --card:#ffffff;
+  --navy:#12355b; --teal:#0e7c7b;
+  --ok:#166534; --ok-bg:#dcfce7;
+  --warn:#92400e; --warn-bg:#fef3c7;
+  --bad:#991b1b; --bad-bg:#fee2e2;
+  --info:#1e3a8a; --info-bg:#dbeafe;
+  --nav-h:64px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-padding-bottom:calc(var(--nav-h) + 24px + env(safe-area-inset-bottom))}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:17px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  padding-bottom:calc(var(--nav-h) + 28px + env(safe-area-inset-bottom));
+  touch-action:manipulation;
+}
+body.lock{overflow:hidden}
+button,select,summary{font:inherit; touch-action:manipulation}
+[hidden]{display:none!important}
+
+/* ---------- header (always visible) ---------- */
+.top{position:sticky; top:0; z-index:30}
+.brand{background:var(--navy); color:#fff; display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 8px 6px 14px}
+.brand h1{margin:0; font-size:1.05rem; font-weight:700}
+.brandr{display:flex; align-items:center; gap:8px}
+.brand .tag{font-size:.75rem; background:#fff; color:var(--navy); padding:2px 8px; border-radius:99px; font-weight:700; white-space:nowrap}
+.cog{display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.16); color:#fff; text-decoration:none}
+.cog svg{width:22px; height:22px; fill:currentColor}
+.cog[aria-current="page"]{background:#fff; color:var(--navy)}
+.sample{background:var(--warn-bg); color:var(--warn); font-size:.85rem; font-weight:600; padding:5px 14px; border-bottom:2px solid #f59e0b}
+
+main{max-width:760px; margin:0 auto; padding:14px}
+h2{margin:4px 0 6px; font-size:1.35rem}
+h2.sect{font-size:1.15rem; margin:20px 0 4px}
+h3.sec{margin:0 0 8px; font-size:1.05rem}
+.sub{color:var(--muted); margin:0 0 12px; font-size:.95rem}
+.small{font-size:.85rem; color:var(--muted)}
+.meta{color:var(--muted); font-size:.9rem}
+
+/* ---------- cards ---------- */
+.card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; margin:0 0 12px}
+.card.info{background:var(--info-bg); border-color:#93c5fd; color:var(--info)}
+.card.next{border-left:6px solid var(--teal)}
+.card.alert{border-left:6px solid #dc2626}
+.rowbtn{
+  display:block; width:100%; text-align:left; background:var(--card); color:inherit;
+  border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin:0 0 10px;
+  min-height:64px; cursor:pointer; text-decoration:none;
+}
+.rowbtn:active{background:#eef2f7}
+.rowtop{display:flex; justify-content:space-between; align-items:flex-start; gap:10px}
+.rowtop>*{min-width:0}
+.rowtop>.chip{flex:none}
+.name{font-weight:700; font-size:1.1rem}
+.line{font-size:.92rem; margin-top:4px}
+.line.bad{color:var(--bad)} .line.warn{color:var(--warn)} .line.ok{color:var(--ok)}
+.okline{color:var(--ok); font-weight:700; margin:6px 0}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:99px; font-weight:700; font-size:.82rem; max-width:100%; white-space:nowrap}
+.chip.wrap{white-space:normal; overflow-wrap:anywhere}
+.chip.ok{background:var(--ok-bg); color:var(--ok)}
+.chip.warn{background:var(--warn-bg); color:var(--warn)}
+.chip.bad{background:var(--bad-bg); color:var(--bad)}
+.chip.info{background:var(--info-bg); color:var(--info)}
+.chip.none{background:#e5e7eb; color:#374151}
+.chip.lv1{background:#e0f2fe; color:#075985}
+.chip.lv2{background:#cffafe; color:#155e75}
+.chip.lv3{background:#dbeafe; color:#1e40af}
+.chip.lv4{background:#e0e7ff; color:#3730a3}
+.chip.lv5{background:#ede9fe; color:#5b21b6}
+.chip.lv6{background:#fae8ff; color:#86198f}
+.chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; align-items:center}
+.bar{height:12px; background:#e5e7eb; border-radius:99px; overflow:hidden; margin:6px 0}
+.bar span{display:block; height:100%; background:var(--teal)}
+
+/* ---------- buttons (big, no typing) ---------- */
+.act{
+  display:block; width:100%; min-height:56px; margin:8px 0 0; padding:10px 14px;
+  background:var(--teal); color:#fff; border:0; border-radius:14px; font-weight:700; cursor:pointer; text-align:center
+}
+.act:active{filter:brightness(.9)}
+.act.alt{background:#fff; color:var(--navy); border:2px solid var(--navy)}
+.act.danger{background:#fff; color:var(--bad); border:2px solid var(--bad)}
+.act[disabled]{background:#e5e7eb; color:#6b7280; border:0; cursor:not-allowed}
+.pair{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
+.pair .act{margin-top:8px}
+.btnrow{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.btnrow .act{margin:0; min-height:56px; padding:10px 4px; white-space:nowrap}
+.back,.closebtn{
+  white-space:nowrap; display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 16px;
+  background:#fff; border:2px solid var(--line); border-radius:12px; color:var(--navy); font-weight:700; cursor:pointer
+}
+.filters{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:0 0 10px}
+.tabs{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin:0 0 12px}
+.tabs .fbtn{font-size:.9rem; padding:4px 4px; overflow-wrap:anywhere}
+.fbtn{min-height:52px; border:2px solid var(--line); background:#fff; border-radius:12px; font-weight:700; color:#374151; cursor:pointer; padding:4px 8px}
+.fbtn[aria-pressed="true"]{border-color:var(--navy); background:#eaf0f8; color:var(--navy)}
+select{min-height:52px; padding:0 10px; border:2px solid var(--line); border-radius:12px; background:#fff; width:100%; margin-top:4px}
+label{display:block; font-weight:700; margin:10px 0 2px}
+
+/* ---------- folds and the sample picker ---------- */
+details.fold,details.picker{margin:0 0 12px}
+details.fold>summary,details.picker>summary{
+  list-style:none; display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:52px; padding:8px 14px;
+  background:var(--card); border:1px solid var(--line); border-radius:14px; font-weight:700; color:var(--navy); cursor:pointer
+}
+details.fold>summary::-webkit-details-marker,details.picker>summary::-webkit-details-marker{display:none}
+details.fold>summary::after,details.picker>summary::after{content:"▾"; font-size:1.1rem}
+details.fold[open]>summary::after,details.picker[open]>summary::after{content:"▴"}
+details.fold[open]>summary{margin-bottom:10px}
+details.picker>summary{min-height:48px; background:transparent; border:1px dashed #9ca3af; font-weight:400; color:var(--muted); font-size:.9rem}
+details.picker[open]>summary{margin-bottom:6px}
+.pbody{padding:2px 0 6px}
+
+/* ---------- skills ---------- */
+.skill{padding:10px 0; border-bottom:1px solid #eef0f3}
+.skill:last-child{border-bottom:0}
+.skrow{display:flex; justify-content:space-between; align-items:center; gap:10px}
+.skname{font-weight:700}
+.seg{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin-top:6px}
+.segbtn{min-height:48px; border:2px solid var(--line); background:#fff; border-radius:12px; font-weight:700; color:#374151; cursor:pointer; padding:0 4px}
+.segbtn[aria-pressed="true"].s-none{background:#e5e7eb; border-color:#9ca3af}
+.segbtn[aria-pressed="true"].s-learning{background:var(--info-bg); border-color:#2563eb; color:var(--info)}
+.segbtn[aria-pressed="true"].s-done{background:var(--ok-bg); border-color:#16a34a; color:var(--ok)}
+details.ahead{margin-top:12px; border-top:1px dashed var(--line); padding-top:6px}
+details.ahead summary{min-height:48px; display:flex; align-items:center; font-weight:700; color:var(--navy); cursor:pointer}
+.cert{padding:12px 0; border-bottom:1px solid #eef0f3}
+.cert:last-child{border-bottom:0}
+.crow{display:flex; justify-content:space-between; align-items:flex-start; gap:10px}
+.crow b{display:block}
+.tl{list-style:none; margin:0; padding:0}
+.tl li{padding:8px 0; border-bottom:1px solid #eef0f3; display:flex; justify-content:space-between; gap:10px}
+.tl li:last-child{border-bottom:0}
+.tl .meta{white-space:nowrap}
+ol.steps{margin:6px 0 0; padding-left:22px}
+ol.steps li{margin:3px 0}
+ol.steps li:first-child{font-weight:700}
+.mate{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #eef0f3}
+.mate:last-child{border-bottom:0}
+
+/* ---------- bottom nav (three roles) ---------- */
+nav{
+  position:fixed; left:0; right:0; bottom:0; z-index:40; background:#fff; border-top:2px solid var(--line);
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); padding-bottom:env(safe-area-inset-bottom)
+}
+nav a{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:var(--nav-h); min-width:0;
+  color:var(--muted); font-weight:700; text-decoration:none; font-size:clamp(.72rem,3.3vw,.9rem); line-height:1.15; text-align:center; overflow-wrap:anywhere
+}
+nav a small{font-weight:400; font-size:.7rem}
+nav a[aria-current="page"]{color:var(--navy); box-shadow:inset 0 4px 0 var(--navy); background:#f1f5fb}
+
+/* ---------- pop-out sheet ---------- */
+#overlay{position:fixed; inset:0; background:rgba(17,24,39,.55); z-index:50}
+#sheet{
+  position:fixed; left:0; right:0; bottom:0; z-index:55; max-width:760px; margin:0 auto;
+  height:92vh; height:92dvh; background:var(--bg); border-radius:18px 18px 0 0;
+  display:flex; flex-direction:column; box-shadow:0 -8px 30px rgba(0,0,0,.3); animation:up .2s ease-out
+}
+@keyframes up{from{transform:translateY(40px); opacity:.4} to{transform:none; opacity:1}}
+@media (prefers-reduced-motion:reduce){#sheet{animation:none}}
+.sheet-h{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:12px 14px; background:#fff; border-bottom:1px solid var(--line); border-radius:18px 18px 0 0}
+.sheet-h h2{margin:0}
+#sheetBody{overflow-y:auto; padding:14px 14px calc(110px + env(safe-area-inset-bottom)); flex:1; -webkit-overflow-scrolling:touch}
+
+/* ---------- confirmation toast: message, Undo (when available) and OK ---------- */
+#toast{
+  position:fixed; left:12px; right:12px; bottom:calc(var(--nav-h) + 12px + env(safe-area-inset-bottom)); z-index:60;
+  background:#111827; color:#fff; border-radius:14px; padding:10px 12px; display:flex; gap:10px; align-items:center; justify-content:space-between;
+  max-width:736px; margin:0 auto
+}
+body.lock #toast{bottom:calc(12px + env(safe-area-inset-bottom))}
+#toastMsg{flex:1; min-width:0}
+.toast-btns{display:flex; gap:8px; flex:none}
+#toast button{border:0; border-radius:10px; min-height:48px; min-width:56px; padding:0 16px; font-weight:700; cursor:pointer}
+#toastUndo{background:#fbbf24; color:#111}
+#toastOk{background:#fff; color:#111}
+button:focus-visible,a:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #2563eb; outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <h1>Spotter Sheet</h1>
+    <span class="brandr">
+      <span class="tag">DEMO</span>
+      <a href="#demo" class="cog" id="cog" aria-label="Demo controls" title="Demo controls"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></a>
+    </span>
+  </div>
+  <div class="sample" role="note" id="sampleBar">Fictional concept. SAMPLE DATA: invented people, no real club or children.</div>
+</header>
+
+<main id="app"></main>
+
+<div id="toast" hidden role="status">
+  <span id="toastMsg"></span>
+  <span class="toast-btns"><button id="toastUndo" type="button">Undo</button><button id="toastOk" type="button">OK</button></span>
+</div>
+
+<nav id="nav" aria-label="Choose a view">
+  <a href="#parent" data-tab="parent">Child/Parent<small>attendee</small></a>
+  <a href="#coach" data-tab="coach">Gymnast Coach<small>my group</small></a>
+  <a href="#admin" data-tab="admin">Club Admin<small>everyone</small></a>
+</nav>
+
+<div id="overlay" hidden></div>
+<section id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <div class="sheet-h">
+    <div><h2 id="sheetTitle"></h2><div id="sheetSub"></div></div>
+    <button type="button" class="closebtn" id="sheetClose">Close ✕</button>
+  </div>
+  <div id="sheetBody"></div>
+</section>
+
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+
+/* =====================================================================
+   SAMPLE CLUB RULES – invented for this demo. NOT Gymnastics Ireland's.
+   ===================================================================== */
+const KEY='spotter-sheet-demo-v5', WARN_DAYS=60;
+const LEVELS=[
+  {n:1, short:'Starter',                skills:['Forward roll','Straight jump','Balance on a low beam','Hang from a bar']},
+  {n:2, short:'Foundation',             skills:['Cartwheel','Backward roll','Bridge','Straddle jump']},
+  {n:3, short:'Intermediate',           skills:['Round-off','Handstand hold','Back walkover','Glide swing on bars']},
+  {n:4, short:'Advanced',               skills:['Back handspring','Handstand forward roll','Kip on bars','Cartwheel on beam']},
+  {n:5, short:'Competitive (local)',    skills:['Back tuck','Round-off back handspring','Handspring vault','Free hip circle']},
+  {n:6, short:'Competitive (national+)',skills:['Layout with full twist','Beam series with a somersault','Yurchenko-style vault','Bar release move']}
+];
+// Generic tier names (not official award titles). years:0 = no expiry.
+const CERTS=[
+  {id:'sg', name:'Safeguarding training',      years:3, minAge:14, prereq:null},
+  {id:'vet',name:'Vetting status (date only)', years:3, minAge:14, prereq:null},
+  {id:'fa', name:'First aid',                  years:2, minAge:14, prereq:null},
+  {id:'t1', name:'Assistant coach tier',       years:0, minAge:14, prereq:null, tier:1},
+  {id:'t2', name:'Club coach tier',            years:0, minAge:16, prereq:'t1', tier:2},
+  {id:'t3', name:'Advanced coach tier',        years:0, minAge:18, prereq:'t2', tier:3}
+];
+const CERT={}; CERTS.forEach(c=>{ CERT[c.id]=c; });
+const GROUPS=[
+  {id:'tots',name:'Tots',              minL:1,maxL:1,minA:4, maxA:6, assist:1},
+  {id:'beg', name:'Rec Beginners',     minL:1,maxL:2,minA:6, maxA:9, assist:1},
+  {id:'int', name:'Rec Intermediate',  minL:2,maxL:3,minA:8, maxA:12,assist:2},
+  {id:'dev', name:'Development Squad', minL:3,maxL:4,minA:9, maxA:15,assist:2},
+  {id:'comp',name:'Competitive Squad', minL:5,maxL:6,minA:11,maxA:18,assist:3}
+];
+const G=id=>GROUPS.find(g=>g.id===id)||null;
+
+/* =====================================================================
+   DATE HELPERS (UTC midnight, so no time-zone surprises)
+   ===================================================================== */
+const realToday=()=>{ const d=new Date(); return new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); };
+const addDays=(d,n)=>{ const x=new Date(d.getTime()); x.setUTCDate(x.getUTCDate()+n); return x; };
+const addYears=(d,n)=>{ const x=new Date(d.getTime()); x.setUTCFullYear(x.getUTCFullYear()+n); return x; };
+const iso=d=>d.toISOString().slice(0,10);
+const parse=s=>{ const p=s.split('-').map(Number); return new Date(Date.UTC(p[0],p[1]-1,p[2])); };
+const diffDays=(a,b)=>Math.round((a.getTime()-b.getTime())/86400000);
+const fmt=d=>d.toLocaleDateString('en-IE',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+const monthIndex=d=>d.getUTCFullYear()*12+d.getUTCMonth();
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const plural=(n,w)=>n+' '+(w==='child'?(n===1?'child':'children'):w+(n===1?'':'s'));
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+
+/* =====================================================================
+   SAMPLE DATA – two distinct groups of people
+   Children (Child/Parent view): first names from Ireland's most popular newborn names of 2025 (CSO).
+   Gymnast coaches (Gymnast Coach view): different, invented names. No name appears in both groups.
+   ===================================================================== */
+let data=null;
+
+function seed(){
+  const T=realToday();
+  const mk=(id,role,name,age,xm,level,skills,o)=>{
+    o=o||{};
+    const bT=monthIndex(T)-(age*12+xm+1), by=Math.floor(bT/12), bm=(bT%12)+1, completed={};
+    for(let k=1;k<level;k++) completed[k]=iso(addDays(T,-((level-k)*150+30)));
+    return {id,role,name,birth:by+'-'+(bm<10?'0':'')+bm,level,completed,skills,certs:o.certs||{},group:o.group||null,assists:o.assists||null};
+  };
+  const valid=(d,y)=>({status:'done',date:iso(addYears(addDays(T,d),-y))});   // expires d days from today
+  const got=d=>({status:'done',date:iso(addDays(T,-d))});
+  const lrn=()=>({status:'learning',date:null});
+  const D='done', L='learning';
+  return {
+    v:3,
+    people:[
+      // ----- children -----
+      mk('c1', 'child','Sadie', 4, 3,1,{L1S1:L},{group:'tots'}),
+      mk('c2', 'child','Fionn', 5, 8,1,{L1S1:D,L1S2:D,L1S3:L},{group:'tots'}),
+      mk('c3', 'child','Lily',  6, 5,2,{L2S1:D,L2S2:L},{group:'beg'}),
+      mk('c4', 'child','Noah',  7, 2,1,{L1S1:D,L1S2:D,L1S3:D,L1S4:D},{group:'beg'}),
+      mk('c5', 'child','Éabha', 8, 6,2,{L2S1:D,L2S2:D,L2S3:D,L2S4:L,L3S1:L},{group:'int'}),
+      mk('c6', 'child','Grace', 9, 3,3,{L3S1:D,L3S2:D,L3S3:L},{group:'int'}),
+      mk('c7', 'child','Emily',10, 1,3,{L3S1:D,L3S2:D,L3S3:D,L3S4:L},{group:'dev'}),
+      mk('c8', 'child','James',11, 9,3,{L3S1:D,L3S2:D,L3S3:L},{group:'dev'}),
+      mk('c9', 'child','Jack', 10, 5,4,{L4S1:D,L4S2:L},{group:'dev'}),
+      mk('c10','child','Oisín',12, 4,4,{L4S1:D,L4S2:D,L4S3:D,L4S4:L},{group:'int'}),
+      mk('c11','child','Fiadh',13, 8,5,{L5S1:D,L5S2:D,L5S3:L},{group:'comp'}),
+      mk('c12','child','Rían', 12, 6,5,{L5S1:D,L5S2:D,L5S3:D,L5S4:D},{group:'comp'}),
+      // ----- gymnast coaches (teen gymnasts who also coach) -----
+      mk('k1','coach','Niamh',  17,4,5,{L5S1:D,L5S2:D,L5S3:D,L5S4:L},{certs:{sg:valid(900,3),vet:valid(600,3),fa:valid(300,2),t1:got(700),t2:got(250)},assists:'int'}),
+      mk('k2','coach','Darragh',16,2,4,{L4S1:D,L4S2:D,L4S3:L},{certs:{sg:valid(500,3),vet:valid(40,3),t1:got(400)},assists:'beg'}),
+      mk('k3','coach','Ciara',  15,6,3,{L3S1:D,L3S2:D,L3S3:D,L3S4:L},{certs:{sg:valid(800,3),vet:valid(800,3),t1:got(200)},assists:'tots'}),
+      mk('k4','coach','Saoirse',19,1,6,{L6S1:D,L6S2:D,L6S3:D,L6S4:L},{certs:{sg:valid(300,3),vet:valid(300,3),fa:valid(200,2),t1:got(1000),t2:got(700),t3:got(120)},assists:'comp'}),
+      mk('k5','coach','Conor',  18,3,5,{L5S1:D,L5S2:D,L5S3:D,L5S4:D},{certs:{sg:valid(-12,3),vet:valid(400,3),t1:got(800),t2:got(300)},assists:'dev'}),
+      mk('k6','coach','Aoife',  14,2,3,{L3S1:D,L3S2:L},{certs:{sg:valid(700,3),t1:lrn()}}),
+      mk('k7','coach','Cian',   16,0,4,{L4S1:D},{})
+    ],
+    requests:[
+      {id:'r1',pid:'c4',kind:'level',target:'level',created:iso(addDays(T,-2)),status:'pending'},
+      {id:'r2',pid:'k7',kind:'cert', target:'sg',   created:iso(addDays(T,-1)),status:'pending'},
+      {id:'r3',pid:'c3',kind:'move', target:'int',from:'beg',by:'k2',created:iso(addDays(T,-3)),status:'pending'}
+    ],
+    meParent:'c4', meCoach:'k1', offset:0, nextReq:4
+  };
+}
+function load(){
+  try{ const raw=localStorage.getItem(KEY); if(raw){ const d=JSON.parse(raw); if(d&&d.v===3&&d.people&&d.requests) return d; } }catch(e){}
+  return seed();
+}
+const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(data)); }catch(e){} };
+const now=()=>addDays(realToday(),data.offset);
+const getP=id=>data.people.find(p=>p.id===id)||null;
+const kids=()=>data.people.filter(p=>p.role==='child');
+const coaches=()=>data.people.filter(p=>p.role==='coach');
+const coachesOf=gid=>coaches().filter(c=>c.assists===gid);
+
+/* =====================================================================
+   RULES (these run by themselves from dates and records)
+   ===================================================================== */
+function ageYears(p,n){
+  const b=p.birth.split('-').map(Number), bt=b[0]*12+(b[1]-1);
+  return Math.max(0,Math.floor((monthIndex(n)-bt-1)/12));   // counted once the birth month has passed
+}
+function monthsUntilAge(p,n,target){
+  const b=p.birth.split('-').map(Number), bt=b[0]*12+(b[1]-1);
+  return Math.max(0,(bt+target*12+1)-monthIndex(n));
+}
+const levelLabel=n=>'Level '+n+' · '+LEVELS[n-1].short;
+const rangeText=(a,b,w)=>a===b?w+' '+a:w+'s '+a+'–'+b;
+const skillKey=(lv,i)=>'L'+lv+'S'+(i+1);
+const skillState=(p,lv,i)=>lv<p.level?'done':(p.skills[skillKey(lv,i)]||'none');
+function progress(p){ let c=0; for(let i=0;i<4;i++){ if(skillState(p,p.level,i)==='done') c++; } return c; }
+const ready=p=>!p.completed[p.level]&&progress(p)===4;
+function completeLevel(p,n){ p.completed[p.level]=iso(n); if(p.level<6) p.level++; resolvePending(p.id,'level','level'); }
+function tierOf(p){ let t=0; [1,2,3].forEach(i=>{ const r=p.certs['t'+i]; if(r&&r.status==='done'&&t===i-1) t=i; }); return t; }
+
+function certState(p,id,n){
+  const c=CERT[id], r=p.certs[id], age=ageYears(p,n);
+  if(r&&r.status==='done'){
+    if(!c.years) return {state:'valid',date:r.date,exp:null,days:null};
+    const exp=addYears(parse(r.date),c.years), days=diffDays(exp,n);
+    return {state:days<0?'expired':(days<=WARN_DAYS?'soon':'valid'),date:r.date,exp,days};
+  }
+  if(r&&r.status==='learning') return {state:'learning'};
+  if(age<c.minAge) return {state:'blocked',reason:'opens at age '+c.minAge+' (about '+plural(monthsUntilAge(p,n,c.minAge),'month')+')'};
+  if(c.prereq&&!(p.certs[c.prereq]&&p.certs[c.prereq].status==='done')) return {state:'blocked',reason:'needs the '+CERT[c.prereq].name+' first'};
+  return {state:'none'};
+}
+function certChip(s){
+  const m={valid:['ok','✓ '+(s.exp?'Valid':'Achieved')],soon:['warn','⚠ Due soon'],expired:['bad','✕ Expired'],learning:['info','… Learning'],none:['none','Not started'],blocked:['none','Not yet']}[s.state];
+  return `<span class="chip ${m[0]}">${m[1]}</span>`;
+}
+function certDetail(c,s){
+  if(s.state==='valid') return s.exp?'Valid until '+fmt(s.exp):'Achieved '+fmt(parse(s.date));
+  if(s.state==='soon') return 'Review due '+fmt(s.exp)+' (in '+plural(s.days,'day')+')';
+  if(s.state==='expired') return 'Expired '+fmt(s.exp)+' ('+plural(Math.abs(s.days),'day')+' ago)';
+  if(s.state==='learning') return 'In progress';
+  if(s.state==='blocked') return cap(s.reason);
+  return 'Not started';
+}
+
+/* --- can this coach assist a group? (coach tier + safeguarding + vetting status) --- */
+function assistEval(p,g,n){
+  const blockers=[], warns=[], age=ageYears(p,n);
+  ['sg','vet'].forEach(id=>{
+    const c=CERT[id], s=certState(p,id,n);
+    if(s.state==='expired') blockers.push({key:id,text:c.name+': expired '+fmt(s.exp),first:'Renew '+c.name+' (expired '+plural(Math.abs(s.days),'day')+' ago)'});
+    else if(s.state==='soon') warns.push(c.name+': review due '+fmt(s.exp)+' (in '+plural(s.days,'day')+')');
+    else if(s.state==='learning') blockers.push({key:id,text:c.name+': in progress',first:'Finish '+c.name});
+    else if(s.state==='blocked') blockers.push({key:id,text:c.name+': '+s.reason,first:c.name+' '+s.reason});
+    else if(s.state==='none') blockers.push({key:id,text:c.name+': not recorded',first:'Do '+c.name+' and record it'});
+  });
+  const have=tierOf(p);
+  if(have<g.assist){
+    const nx=CERT['t'+(have+1)], ns=certState(p,nx.id,n);
+    const first=ns.state==='learning'?'Finish the '+nx.name+' (in progress)':ns.state==='blocked'?nx.name+' '+ns.reason:'Start the '+nx.name;
+    blockers.push({key:'tier',text:'Coach tier: needs '+CERT['t'+g.assist].name+' (has '+(have?CERT['t'+have].name:'none')+')',first});
+  }
+  const order=age<14?['tier','sg','vet']:['sg','vet','tier'];
+  blockers.sort((a,b)=>order.indexOf(a.key)-order.indexOf(b.key));
+  return {meets:blockers.length===0,blockers,warns};
+}
+function nextAssist(p,n){
+  for(let i=0;i<GROUPS.length;i++){ const r=assistEval(p,GROUPS[i],n); if(!r.meets) return {group:GROUPS[i],res:r}; }
+  return null;
+}
+function alerts(p,n){
+  if(p.role!=='coach') return [];
+  const a=[];
+  CERTS.forEach(c=>{
+    if(!c.years) return;
+    const s=certState(p,c.id,n);
+    if(s.state==='expired') a.push({sev:'bad',text:c.name+' expired'});
+    else if(s.state==='soon') a.push({sev:'warn',text:c.name+' due soon'});
+  });
+  if(p.assists&&!assistEval(p,G(p.assists),n).meets) a.push({sev:'bad',text:'Assisting '+G(p.assists).name+': requirements not met'});
+  return a;
+}
+function learningList(p){
+  const out=[];
+  [p.level,p.level+1].forEach(lv=>{
+    if(lv>6) return;
+    for(let i=0;i<4;i++){ if(p.skills[skillKey(lv,i)]==='learning') out.push('Skill: '+LEVELS[lv-1].skills[i]+' (Level '+lv+')'); }
+  });
+  CERTS.forEach(c=>{ if(p.certs[c.id]&&p.certs[c.id].status==='learning') out.push('Certification: '+c.name); });
+  return out;
+}
+const pending=p=>data.requests.filter(r=>r.pid===p.id&&r.status==='pending');
+const pendingMove=p=>data.requests.find(r=>r.pid===p.id&&r.kind==='move'&&r.status==='pending')||null;
+function resolvePending(pid,kind,target){
+  data.requests.forEach(r=>{ if(r.pid===pid&&r.kind===kind&&r.target===target&&r.status==='pending'){ r.status='approved'; r.decided=iso(now()); } });
+}
+function fit(p,g,n){
+  const a=ageYears(p,n);
+  return {a,level:p.level<g.minL?'below':(p.level>g.maxL?'above':'within'),age:a<g.minA?'younger':(a>g.maxA?'older':'within')};
+}
+function fitChip(f){
+  if(f.level==='within'&&f.age==='within') return '<span class="chip ok">✓ Right level</span>';
+  if(f.level==='above') return '<span class="chip warn">↑ Above range</span>';
+  if(f.level==='below') return '<span class="chip warn">↓ Below range</span>';
+  return '<span class="chip warn">Age outside range</span>';
+}
+function fitText(p,g,n){
+  const f=fit(p,g,n);
+  return `Level ${p.level} ${f.level==='within'?'fits':f.level==='above'?'is above':'is below'} ${g.name} (${rangeText(g.minL,g.maxL,'Level')}); age ${f.a} ${f.age==='within'?'fits':'is outside'} ages ${g.minA}–${g.maxA}.`;
+}
+const inMyGroup=c=>{ const k=getP(data.meCoach); return !!k.assists&&k.assists===c.group; };
+
+/* --- requests: level (child or coach), cert (coach), move (recommended by a coach, decided by the club admin) --- */
+function reqTitle(r){ return r.kind==='level'?'Move up a level':r.kind==='cert'?'Start: '+CERT[r.target].name:'Move to '+G(r.target).name; }
+function reqInfo(r,n){
+  const p=getP(r.pid);
+  if(r.kind==='level'){ const ok=ready(p); return {ok,why:ok?`All 4 skills done. Approving marks Level ${p.level} completed.`:`Not ready: ${progress(p)} of 4 skills done at Level ${p.level}.`}; }
+  if(r.kind==='cert'){ const s=certState(p,r.target,n), ok=s.state==='none'; return {ok,why:ok?'Approving sets this to “Learning”.':'Can’t start yet: '+(s.state==='blocked'?s.reason:'already '+s.state)+'.'}; }
+  return {ok:true,why:fitText(p,G(r.target),n)};
+}
+
+/* =====================================================================
+   HTML BUILDERS
+   ===================================================================== */
+const levelChip=n=>`<span class="chip lv${n}">L${n} · ${esc(LEVELS[n-1].short)}</span>`;
+const bar=(v,t)=>`<div class="bar" role="img" aria-label="${v} of ${t} skills done"><span style="width:${Math.round(v/t*100)}%"></span></div>`;
+const stateChip=st=>st==='done'?'<span class="chip ok">✓ Done</span>':st==='learning'?'<span class="chip info">… Learning</span>':'<span class="chip none">Not yet</span>';
+const tierChip=p=>{ const t=tierOf(p); return `<span class="chip ${t?'ok':'none'}">${t?esc(CERT['t'+t].name):'No coach tier yet'}</span>`; };
+const alertChips=al=>al.length?`<div class="chips">${al.map(a=>`<span class="chip wrap ${a.sev}">${a.sev==='bad'?'✕ ':'⚠ '}${esc(a.text)}</span>`).join('')}</div>`:'';
+const fold=(key,title,inner)=>`<details class="fold" data-k="${key}"><summary><span>${title}</span></summary>${inner}</details>`;
+const fb=(k,v,label,c)=>`<button type="button" class="fbtn" data-filter="${k}|${v}" aria-pressed="${ui[k]===v}">${label} (${c})</button>`;
+
+function picker(kind){
+  const par=kind==='parent', list=par?kids():coaches(), key=par?'meParent':'meCoach', cur=getP(data[key]), n=now(), id=par?'selParent':'selCoach';
+  return `<details class="picker" data-k="pick"><summary><span>Sample ${par?'child':'coach'}: <b>${esc(cur.name)}</b> · change</span></summary><div class="pbody"><label for="${id}" style="margin-top:0">Choose a sample ${par?'child':'coach'}</label><select id="${id}" data-me="${key}">${list.map(x=>`<option value="${x.id}"${x.id===cur.id?' selected':''}>${esc(x.name)} (age ${ageYears(x,n)})</option>`).join('')}</select></div></details>`;
+}
+function groupSelect(key,incNone){
+  return `<label for="${key}Sel" style="margin-top:0">${key==='cg'?'Group they assist':'Group'}</label><select id="${key}Sel" data-fgroup="${key}" style="margin-bottom:12px"><option value="all">All groups</option>${incNone?`<option value="none"${ui[key]==='none'?' selected':''}>Not assigned</option>`:''}${GROUPS.map(g=>`<option value="${g.id}"${ui[key]===g.id?' selected':''}>${esc(g.name)}</option>`).join('')}</select>`;
+}
+
+function skillRows(p,lv,mode){
+  let h='';
+  for(let i=0;i<4;i++){
+    const name=LEVELS[lv-1].skills[i], st=skillState(p,lv,i);
+    h+=`<div class="skill"><div class="skrow"><span class="skname">${esc(name)}</span>${mode==='edit'?'':stateChip(st)}</div>`;
+    if(mode==='edit') h+=`<div class="seg" role="group" aria-label="Status of ${esc(name)}">${[['none','Not yet'],['learning','Learning'],['done','Done']].map(o=>`<button type="button" class="segbtn s-${o[0]}" aria-pressed="${st===o[0]}" data-act="skill" data-id="${p.id}" data-lv="${lv}" data-i="${i}" data-val="${o[0]}">${o[1]}</button>`).join('')}</div>`;
+    h+='</div>';
+  }
+  return h;
+}
+function levelSection(p,mode){
+  const pr=progress(p), L=p.level;
+  let h=`<section class="card"><h3 class="sec">Level and skills</h3><div class="chips" style="margin:0 0 4px">${levelChip(L)}${p.completed[6]?'<span class="chip ok">✓ All levels completed</span>':'<span class="meta">working on this level</span>'}</div><div class="meta">${pr} of 4 skills done at Level ${L}</div>${bar(pr,4)}<div>${skillRows(p,L,mode)}</div>`;
+  if(p.completed[L]) h+=`<p class="okline">✓ Level ${L} completed on ${esc(fmt(parse(p.completed[L])))}.</p>`;
+  else if(mode==='edit') h+=pr===4?`<button type="button" class="act" data-act="complete" data-id="${p.id}">Mark Level ${L} completed</button>`:`<button type="button" class="act" disabled>Mark Level ${L} completed</button><p class="small" style="margin:6px 0 0">Needs all 4 skills done first (${pr} of 4 now).</p>`;
+  else if(pr===4) h+=`<p class="okline">✓ All 4 skills done. Ready for the club to mark Level ${L} complete.</p>`;
+  if(L<6) h+=`<details class="ahead" data-k="ahead"><summary>Working ahead: Level ${L+1} skills</summary>${skillRows(p,L+1,mode)}<p class="small" style="margin:6px 0 0">Skills at the next level can be started early. They count once the person moves up.</p></details>`;
+  return h+'</section>';
+}
+function certSection(p,mode,n){
+  let h='<section class="card"><h3 class="sec">Qualifications and certifications</h3>';
+  CERTS.forEach(c=>{
+    const s=certState(p,c.id,n);
+    h+=`<div class="cert"><div class="crow"><div><b>${esc(c.name)}</b><span class="meta">${esc(certDetail(c,s))}</span></div>${certChip(s)}</div>`;
+    if(mode==='edit'){
+      const a=(val,label,cls)=>`<button type="button" class="act ${cls||''}" data-act="cert" data-id="${p.id}" data-cert="${c.id}" data-val="${val}">${label}</button>`;
+      if(s.state==='none') h+=`<div class="pair">${a('learning','Start learning','alt')}${a('done','Mark achieved today')}</div>`;
+      else if(s.state==='learning') h+=`<div class="pair">${a('done','Mark achieved today')}${a('clear','Stop learning','alt')}</div>`;
+      else if(s.state!=='blocked') h+=`<div class="pair">${c.years?a('done','Renew today','alt'):'<span></span>'}${a('clear','Remove record','danger')}</div>`;
+    }
+    h+='</div>';
+  });
+  return h+'<p class="small" style="margin:8px 0 0">Sample rules: safeguarding and vetting reviewed every 3 years, first aid every 2 years. Stores dates only, never ID documents or vetting disclosures.</p></section>';
+}
+function coachSection(p,mode,n){
+  const age=ageYears(p,n), have=tierOf(p);
+  let h='<section class="card next"><h3 class="sec">Coaching path</h3>';
+  if(age<14) return h+`<p style="margin:0">Opens at age 14 (about ${plural(monthsUntilAge(p,n,14),'month')}). Until then the focus is on gymnastics skills.</p></section>`;
+  h+=`<p class="meta" style="margin:0 0 6px">Coach tier: <b>${have?esc(CERT['t'+have].name):'none yet'}</b></p>`;
+  const can=GROUPS.filter(g=>assistEval(p,g,n).meets);
+  h+=`<p style="margin:0 0 6px"><b>Can assist:</b> ${can.length?can.map(g=>esc(g.name)).join(', '):'no group yet'}</p>`;
+  if(p.assists){
+    const ag=G(p.assists), r=assistEval(p,ag,n);
+    h+=`<p class="line ${r.meets?'ok':'bad'}" style="margin:0 0 6px">${r.meets?'✓':'⚠'} Currently assisting ${esc(ag.name)}${r.meets?'':': requirements not met ('+esc(r.blockers[0].text)+')'}</p>`;
+  }
+  const nx=nextAssist(p,n);
+  h+=nx?`<p style="margin:8px 0 4px">Next step towards <b>${esc(nx.group.name)}</b>:</p><ol class="steps">${nx.res.blockers.map(b=>`<li>${esc(b.first)}</li>`).join('')}</ol>`:`<p class="okline">✓ Meets the requirements to assist all ${GROUPS.length} sample groups.</p>`;
+  if(mode==='edit') h+=`<label for="assistSel">Assisting group</label><select id="assistSel" data-set-assist="${p.id}"><option value="">None</option>${GROUPS.map(g=>{ const ok=assistEval(p,g,n).meets, sel=p.assists===g.id; return `<option value="${g.id}"${sel?' selected':''}${(!ok&&!sel)?' disabled':''}>${esc(g.name)}${ok?'':' (requirements not met)'}</option>`; }).join('')}</select>`;
+  return h+'</section>';
+}
+function historySection(p){
+  const items=[];
+  Object.keys(p.completed).forEach(k=>items.push({d:p.completed[k],t:`Level ${k} completed (${LEVELS[k-1].short})`}));
+  CERTS.forEach(c=>{ const r=p.certs[c.id]; if(r&&r.status==='done') items.push({d:r.date,t:c.name+' '+(c.years?'recorded':'achieved')}); });
+  items.sort((a,b)=>a.d<b.d?1:-1);
+  const h='<section class="card"><h3 class="sec">Achievements so far</h3>';
+  if(!items.length) return h+'<p class="meta" style="margin:0">Nothing recorded yet.</p></section>';
+  return h+`<ul class="tl">${items.map(i=>`<li><span>${esc(i.t)}</span><span class="meta">${esc(fmt(parse(i.d)))}</span></li>`).join('')}</ul></section>`;
+}
+function learningCard(p){
+  const l=learningList(p);
+  return l.length?`<section class="card"><h3 class="sec">Learning now</h3><div class="chips" style="margin:0">${l.map(x=>`<span class="chip wrap info">${esc(x)}</span>`).join('')}</div></section>`:'';
+}
+function requestRow(r,n,o){
+  const p=getP(r.pid), i=reqInfo(r,n), by=r.by?getP(r.by):null;
+  let h=`<div class="cert"><div class="crow"><div><b>${o.name?esc(p.name)+': ':''}${esc(reqTitle(r))}</b><span class="meta">Requested ${esc(fmt(parse(r.created)))}${by?' · recommended by '+esc(by.name):''}</span></div><span class="chip info">Pending</span></div><p class="small" style="margin:6px 0 0">${esc(i.why)}</p>`;
+  h+=o.act?`<div class="pair"><button type="button" class="act"${i.ok?'':' disabled'} data-act="req-approve" data-rid="${r.id}">Approve</button><button type="button" class="act danger" data-act="req-decline" data-rid="${r.id}">Decline</button></div>`:'<p class="small" style="margin:6px 0 0"><b>Waiting for the club admin.</b></p>';
+  return h+'</div>';
+}
+function requestsCard(p,mode,n){
+  const list=pending(p);
+  return list.length?`<section class="card alert"><h3 class="sec">Requests: ${esc(p.name)}</h3>${list.map(r=>requestRow(r,n,{act:mode==='admin'||r.kind==='level'})).join('')}</section>`:'';
+}
+function askCard(p,n){
+  const pend=pending(p), has=(k,t)=>pend.some(r=>r.kind===k&&r.target===t), opts=[], coach=p.role==='coach';
+  if(!p.completed[6]) opts.push({v:'level|level',t:p.level<6?`Move up to Level ${p.level+1} (${LEVELS[p.level].short})`:'Complete Level 6',dis:has('level','level')});
+  CERTS.forEach(c=>{ if(certState(p,c.id,n).state==='none') opts.push({v:'cert|'+c.id,t:'Start: '+c.name,dis:has('cert',c.id)}); });
+  let h='<section class="card"><h3 class="sec">Ask the club</h3>';
+  if(!opts.length) h+='<p class="meta" style="margin:0">Nothing to request right now.</p>';
+  else h+=`<label for="reqSel" style="margin-top:0">I would like to work on</label><select id="reqSel">${opts.map(o=>`<option value="${o.v}"${o.dis?' disabled':''}>${esc(o.t)}${o.dis?' (already requested)':''}</option>`).join('')}</select><button type="button" class="act" data-act="req-send" data-id="${p.id}">Send request to ${coach?'club admin':'my coach'}</button><p class="small" style="margin:8px 0 0">Demo only: the request appears in the ${coach?'Club Admin':'Gymnast Coach and Club Admin'} view in this browser. Nothing is emailed or sent anywhere.</p>`;
+  const mine=data.requests.filter(r=>r.pid===p.id).slice().reverse();
+  if(mine.length) h+=`<h3 class="sec" style="margin-top:14px">My requests</h3><ul class="tl">${mine.map(r=>`<li><span>${esc(reqTitle(r))}<br><span class="meta">${esc(fmt(parse(r.created)))}</span></span>${r.status==='pending'?'<span class="chip info">Pending</span>':r.status==='approved'?'<span class="chip ok">✓ Approved</span>':'<span class="chip none">Declined</span>'}</li>`).join('')}</ul>`;
+  return h+'</section>';
+}
+function groupSection(p,n){          // club admin: change a child's group directly
+  const g=G(p.group), f=fit(p,g,n);
+  return `<section class="card"><h3 class="sec">Training group</h3><label for="groupSel" style="margin-top:0">Group</label><select id="groupSel" data-set-group="${p.id}">${GROUPS.map(x=>`<option value="${x.id}"${x.id===p.group?' selected':''}>${esc(x.name)}</option>`).join('')}</select><div class="chips">${fitChip(f)}</div><p class="small" style="margin:6px 0 0">${esc(fitText(p,g,n))}</p></section>`;
+}
+function moveCard(p,n){              // gymnast coach: recommend a move, the club admin decides
+  const g=G(p.group), f=fit(p,g,n), pm=pendingMove(p);
+  const others=GROUPS.filter(x=>x.id!==g.id), fits=x=>{ const ff=fit(p,x,n); return ff.level==='within'&&ff.age==='within'; };
+  const pick=(others.find(fits)||others[0]).id;
+  let h=`<section class="card"><h3 class="sec">Training group</h3><div class="name">${esc(g.name)}</div><div class="chips">${fitChip(f)}</div><p class="small" style="margin:6px 0 8px">${esc(fitText(p,g,n))}</p>`;
+  if(pm) h+=`<p class="okline">✓ Move to ${esc(G(pm.target).name)} recommended. Waiting for the club admin.</p>`;
+  else h+=`<label for="moveSel">Recommend a move to</label><select id="moveSel">${others.map(x=>`<option value="${x.id}"${x.id===pick?' selected':''}>${esc(x.name)}${fits(x)?' (fits level and age)':''}</option>`).join('')}</select><button type="button" class="act" data-act="move-send" data-id="${p.id}">Recommend move to club admin</button><p class="small" style="margin:8px 0 0">Demo only: the recommendation appears in the Club Admin view in this browser. Nothing is emailed or sent anywhere.</p>`;
+  return h+'</section>';
+}
+function personDetail(p,mode,n){     // pop-out record: mode 'admin' (club admin) or 'coachedit' (coach editing a child)
+  let h=requestsCard(p,mode,n)+learningCard(p)+levelSection(p,'edit');
+  if(p.role==='coach') h+=certSection(p,'edit',n)+coachSection(p,'edit',n);
+  else h+=mode==='admin'?groupSection(p,n):moveCard(p,n);
+  return h+historySection(p);
+}
+function childRow(c,n,href){
+  const pr=progress(c), f=fit(c,G(c.group),n), pm=pendingMove(c), rq=pending(c).some(r=>r.kind==='level'), ln=learningList(c).length;
+  return `<a class="rowbtn" href="${href}" data-open="${c.id}"><div class="rowtop"><div><div class="name">${esc(c.name)}</div><div class="meta">Age ${ageYears(c,n)} · ${esc(G(c.group).name)}</div></div>${levelChip(c.level)}</div><div class="meta" style="margin-top:6px">Skills at this level: ${pr} of 4</div>${bar(pr,4)}<div class="chips">${ready(c)?'<span class="chip ok">✓ Ready to level up</span>':''}${rq?'<span class="chip info">Level request</span>':''}${pm?`<span class="chip wrap info">Move to ${esc(G(pm.target).name)} recommended</span>`:''}${f.level==='above'?'<span class="chip warn">↑ Above group range</span>':f.level==='below'?'<span class="chip warn">↓ Below group range</span>':''}${ln?`<span class="chip none">Learning ${ln}</span>`:''}</div></a>`;
+}
+function coachRow(p,n,href){
+  const g=p.assists?G(p.assists):null, rq=pending(p).length;
+  return `<a class="rowbtn" href="${href}" data-open="${p.id}"><div class="rowtop"><div><div class="name">${esc(p.name)}</div><div class="meta">Age ${ageYears(p,n)} · ${g?'Assists '+esc(g.name):'Not assigned to a group'}</div></div>${levelChip(p.level)}</div><div class="chips">${tierChip(p)}${rq?`<span class="chip info">${plural(rq,'request')}</span>`:''}</div>${alertChips(alerts(p,n))}</a>`;
+}
+
+/* =====================================================================
+   VIEWS: Child/Parent, Gymnast Coach, Club Admin (plus the demo controls behind the cog)
+   ===================================================================== */
+const ui={tab:'coaches',cf:'all',kf:'all',cg:'all',kg:'all'};
+
+function viewParent(){
+  const p=getP(data.meParent), n=now(), g=G(p.group), f=fit(p,g,n), lv=levelLabel(p.level), range=rangeText(g.minL,g.maxL,'Level');
+  const inGroup=kids().filter(x=>x.group===g.id).length, cs=coachesOf(g.id);
+  const others=GROUPS.filter(x=>{ if(x.id===g.id) return false; const ff=fit(p,x,n); return ff.level==='within'&&ff.age==='within'; });
+  const ls=f.level==='within'?`${p.name}’s level (${lv}) is inside this group’s range (${range}).`
+    :f.level==='above'?`${p.name}’s level (${lv}) is above this group’s range (${range}). They may be ready for a more advanced group.`
+    :`${p.name}’s level (${lv}) is below this group’s range (${range}). This group may be a stretch for now.`;
+  const as=`Age ${f.a} is ${f.age==='within'?'inside':'outside'} the group’s age range (${g.minA}–${g.maxA}).`;
+  let h=`<h2> of the club.</p>${picker('parent')}`;
+  h+=`<section class="card"><div class="rowtop"><div><div class="name" style="font-size:1.25rem">${esc(p.name)}</div><div class="meta">Age ${f.a} · ${esc(g.name)}</div></div>${levelChip(p.level)}</div></section>`;
+  h+=learningCard(p)+levelSection(p,'view')+askCard(p,n);
+  h+=`<section class="card"><h3 class="sec">My group</h3><div class="name" style="font-size:1.25rem">${esc(g.name)}</div><div class="meta">${range} · ages ${g.minA}–${g.maxA} (sample)</div><div class="meta" style="margin-top:6px">${plural(inGroup,'child')} in this group today.</div></section>`;
+  h+=`<section class="card"><h3 class="sec">Is this the right level?</h3><div class="chips" style="margin:0 0 8px">${fitChip(f)}${levelChip(p.level)}</div><p style="margin:0 0 6px">${esc(ls)}</p><p style="margin:0">${esc(as)}</p>${others.length?`<p style="margin:10px 0 0"><b>Other groups that fit level and age:</b> ${others.map(x=>esc(x.name)).join(', ')}.</p>`:'<p class="meta" style="margin:10px 0 0">No other sample group fits both level and age.</p>'}</section>`;
+  h+=`<section class="card"><h3 class="sec">Coaches in this group</h3>${cs.length?cs.map(x=>`<div class="mate"><b>${esc(x.name)}</b>${tierChip(x)}</div>`).join(''):'<p class="meta" style="margin:0">No coach assigned yet.</p>'}</section>`;
+  h+=coachSection(p,'view',n)+historySection(p);
+  h+=`<section class="card"><h3 class="sec">Have a question?</h3><p class="meta" style="margin:0">Ask the club about this group or whether it is the right level.</p><button type="button" class="act" data-act="query">Submit a query to the club</button><div class="card info" id="queryMsg" role="status" tabindex="-1" hidden style="margin:10px 0 0"><b>No information has been sent.</b><br>In the live version, this button would email the club admin to request information. This demo does not send anything.<button type="button" class="act alt" data-act="query-ok">OK</button></div></section>`;
+  return h;
+}
+
+function viewCoach(){
+  const p=getP(data.meCoach), n=now(), g=p.assists?G(p.assists):null;
+  let h=`<h2>Gymnast Coach view</h2><p class="sub">Your profile, and the children in your group.</p>${picker('coach')}`;
+  h+=`<section class="card"><div class="rowtop"><div><div class="name" style="font-size:1.25rem">${esc(p.name)}</div><div class="meta">Age ${ageYears(p,n)} · gymnast and coach</div></div>${levelChip(p.level)}</div><div class="chips">${tierChip(p)}<span class="chip ${g?'info':'none'}">${g?'Assists '+esc(g.name):'Not assigned to a group yet'}</span></div>${alertChips(alerts(p,n))}</section>`;
+  h+=certSection(p,'view',n)+coachSection(p,'view',n);
+  h+=fold('skills',`My gymnastics level and skills (Level ${p.level}: ${progress(p)} of 4)`,learningCard(p)+levelSection(p,'view'));
+  h+=fold('ask','Ask the club',askCard(p,n));
+  return h+groupBlock(p,g,n);
+}
+function groupBlock(p,g,n){
+  if(!g) return '<h2 class="sect">My group</h2><section class="card"><p style="margin:0"><b>Not assigned to a group yet.</b></p><p class="meta" style="margin:6px 0 0">Complete the next step above, then ask the club admin to assign you to a group.</p></section>';
+  const ev=assistEval(p,g,n), mine=kids().filter(c=>c.group===g.id).sort((a,b)=>b.level-a.level||a.name.localeCompare(b.name)), also=coachesOf(g.id).filter(x=>x.id!==p.id);
+  let h=`<h2 class="sect">My group: ${esc(g.name)}</h2>`;
+  if(!ev.meets) h+=`<div class="card alert"><b>⚠ Your requirements for this group are not met.</b><br>${esc(ev.blockers[0].text)}. The club admin can see this.</div>`;
+  h+=`<p class="sub">${plural(mine.length,'child')} · sample range ${rangeText(g.minL,g.maxL,'Level')}, ages ${g.minA}–${g.maxA}${also.length?' · also coached by '+also.map(x=>esc(x.name)).join(', '):''}</p>`;
+  const reqs=data.requests.filter(r=>r.status==='pending'&&mine.some(c=>c.id===r.pid));
+  if(reqs.length) h+=`<section class="card alert"><h3 class="sec">Requests from my group</h3>${reqs.map(r=>requestRow(r,n,{name:true,act:r.kind==='level'})).join('')}</section>`;
+  h+=mine.length?mine.map(c=>childRow(c,n,'#coach/'+c.id)).join(''):'<p class="sub">No children in this group yet.</p>';
+  return h+'<p class="small">Tap a child to see their profile, update their status, or recommend a move to another group.</p>';
+}
+
+function viewAdmin(){
+  const n=now(), pend=data.requests.filter(r=>r.status==='pending');
+  const tb=(k,label,c)=>`<button type="button" class="fbtn" data-atab="${k}" aria-pressed="${ui.tab===k}">${label} (${c})</button>`;
+  let h=`<h2>Club Admin view</h2><p class="sub">Master view: every coach and child, and requests to move children between groups.</p><div class="tabs" role="group" aria-label="Club admin sections">${tb('coaches','Coaches',coaches().length)}${tb('children','Children',kids().length)}${tb('requests','Requests',pend.length)}</div>`;
+  return h+(ui.tab==='coaches'?adminCoaches(n):ui.tab==='children'?adminKids(n):adminRequests(n,pend));
+}
+function adminCoaches(n){
+  const all=coaches(), cnt={all:all.length,alerts:0,none:0,req:0};
+  all.forEach(p=>{ if(alerts(p,n).length) cnt.alerts++; if(!p.assists) cnt.none++; if(pending(p).length) cnt.req++; });
+  const gi=p=>p.assists?GROUPS.indexOf(G(p.assists)):99;
+  const list=all.filter(p=>{
+    if(ui.cg==='none'&&p.assists) return false;
+    if(ui.cg!=='all'&&ui.cg!=='none'&&p.assists!==ui.cg) return false;
+    if(ui.cf==='alerts') return alerts(p,n).length>0;
+    if(ui.cf==='none') return !p.assists;
+    if(ui.cf==='req') return pending(p).length>0;
+    return true;
+  }).sort((a,b)=>gi(a)-gi(b)||a.name.localeCompare(b.name));
+  return `<div class="filters">${fb('cf','all','Everyone',cnt.all)}${fb('cf','alerts','Date alerts',cnt.alerts)}${fb('cf','none','Not assigned',cnt.none)}${fb('cf','req','Requests',cnt.req)}</div>${groupSelect('cg',true)}${list.length?list.map(p=>coachRow(p,n,'#admin/'+p.id)).join(''):'<p class="sub">Nobody matches this filter.</p>'}`;
+}
+function adminKids(n){
+  const all=kids(), cnt={all:all.length,ready:0,move:0,req:0}, lvReq=p=>pending(p).some(r=>r.kind==='level');
+  all.forEach(p=>{ if(ready(p)) cnt.ready++; if(pendingMove(p)) cnt.move++; if(lvReq(p)) cnt.req++; });
+  const list=all.filter(p=>{
+    if(ui.kg!=='all'&&p.group!==ui.kg) return false;
+    if(ui.kf==='ready') return ready(p);
+    if(ui.kf==='move') return !!pendingMove(p);
+    if(ui.kf==='req') return lvReq(p);
+    return true;
+  }).sort((a,b)=>GROUPS.indexOf(G(a.group))-GROUPS.indexOf(G(b.group))||b.level-a.level||a.name.localeCompare(b.name));
+  return `<div class="filters">${fb('kf','all','Everyone',cnt.all)}${fb('kf','ready','Ready to level up',cnt.ready)}${fb('kf','move','Move requested',cnt.move)}${fb('kf','req','Level requests',cnt.req)}</div>${groupSelect('kg',false)}${list.length?list.map(p=>childRow(p,n,'#admin/'+p.id)).join(''):'<p class="sub">Nobody matches this filter.</p>'}`;
+}
+function adminRequests(n,pend){
+  const sec=(title,kind)=>{ const l=pend.filter(r=>r.kind===kind); return l.length?`<section class="card alert"><h3 class="sec">${title} (${l.length})</h3>${l.map(r=>requestRow(r,n,{name:true,act:true})).join('')}</section>`:''; };
+  let h=sec('Move a child to another group','move')+sec('Level requests','level')+sec('Certification requests','cert');
+  if(!pend.length) h+='<p class="sub">No pending requests.</p>';
+  const done=data.requests.filter(r=>r.status!=='pending').slice(-5).reverse();
+  if(done.length) h+=`<section class="card"><h3 class="sec">Recently decided</h3><ul class="tl">${done.map(r=>`<li><span>${esc(getP(r.pid).name)}: ${esc(reqTitle(r))}<br><span class="meta">${esc(fmt(parse(r.decided||r.created)))}</span></span>${r.status==='approved'?'<span class="chip ok">✓ Approved</span>':'<span class="chip none">Declined</span>'}</li>`).join('')}</ul></section>`;
+  return h;
+}
+
+function viewDemo(){
+  const n=now();
+  return `<button type="button" class="back" data-act="demo-back">← Back to the demo</button><h2 style="margin-top:10px">Demo controls</h2><p class="sub">For trying the prototype. These controls are not part of the product.</p>`+
+    `<div class="card"><b>Move the demo date forward</b><p class="small" style="margin:4px 0 8px">Watch certificates turn amber, then red, with nothing typed in.</p><div class="btnrow"><button type="button" class="act alt" data-act="clock" data-n="7">+7 days</button><button type="button" class="act alt" data-act="clock" data-n="30">+30 days</button><button type="button" class="act alt" data-act="clock" data-n="90">+90 days</button></div><button type="button" class="act danger" data-act="clock" data-n="0">Back to today</button><p class="small" style="margin:8px 0 0">Demo date: <b>${esc(fmt(n))}</b> (${data.offset>=0?'+':''}${data.offset} days)</p></div>`+
+    `<div class="card"><b>Reset</b><p class="small" style="margin:4px 0 0">Restores the original 12 children and 7 coaches and clears every change.</p><button type="button" class="act danger" data-act="reset">Reset sample data</button></div>`+
+    `<div class="card"><b>Sample club rules</b><details class="ahead" style="border-top:0;margin-top:0"><summary>Levels, groups and certificate rules</summary><p class="small"><b>Levels (4 skills each):</b> ${LEVELS.map(l=>l.n+' '+esc(l.short)).join(' · ')}</p><p class="small"><b>Groups:</b></p><ul class="small">${GROUPS.map(g=>`<li>${esc(g.name)}: ${rangeText(g.minL,g.maxL,'Level').toLowerCase()}, ages ${g.minA}–${g.maxA}. Assisting needs ${esc(CERT['t'+g.assist].name)} plus valid safeguarding and vetting status.</li>`).join('')}</ul><p class="small">Level completion needs all 4 skills done. Certificate ages: coaching starts at 14, Club tier at 16, Advanced tier at 18.</p></details></div>`+
+    `<div class="card"><b>About this demo</b><p class="small" style="margin:6px 0 0">Fictional concept for a coursework project. All 12 children and 7 gymnast coaches are invented, and no name appears in both groups. The children’s first names come from Ireland’s most popular newborn names of 2025 (CSO); the coaches’ names are random. Ages, levels and certificates are made up. Data is saved only in this browser (localStorage) and nothing is sent anywhere. Levels, skills, tiers and intervals are samples, not Gymnastics Ireland policy. This tool tracks dates and progress only; it does not decide who is allowed to work with children.</p></div>`;
+}
+
+/* =====================================================================
+   RENDERING, ROUTING, SHEET
+   ===================================================================== */
+const app=$('app'), nav=$('nav'), sheet=$('sheet'), overlay=$('overlay'), sheetBody=$('sheetBody'), cog=$('cog'), toastEl=$('toast');
+const cur={view:null,prev:'parent'};
+let openPid=null, openMode=null, lastFocusPid=null, cameFromList=false;
+const VIEWS=['parent','coach','admin','demo'];
+const ALIAS={member:'parent',participant:'parent',attendee:'parent',management:'admin',tools:'demo'};   // old links still work
+
+function renderMain(view){
+  app.innerHTML=({parent:viewParent,coach:viewCoach,admin:viewAdmin,demo:viewDemo})[view]();
+  nav.querySelectorAll('a').forEach(a=>{ if(a.dataset.tab===view) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+  if(view==='demo') cog.setAttribute('aria-current','page'); else cog.removeAttribute('aria-current');
+  $('sampleBar').textContent='Fictional concept. SAMPLE DATA: invented people, no real club or children.'+(data.offset?' Demo date moved +'+data.offset+' days.':'');
+}
+function renderSheet(){
+  const p=getP(openPid), n=now();
+  $('sheetTitle').textContent=p.name;
+  $('sheetSub').innerHTML=`<div class="chips" style="margin:4px 0 0"><span class="chip warn">SAMPLE RECORD</span><span class="meta">Age ${ageYears(p,n)} · ${p.role==='coach'?'Gymnast coach':esc(G(p.group).name)}</span>${levelChip(p.level)}</div>`;
+  const st=sheetBody.scrollTop;
+  sheetBody.innerHTML=personDetail(p,openMode,n);
+  sheetBody.scrollTop=st;
+}
+function openSheet(pid,mode){
+  const first=(openPid===null);
+  openPid=pid; openMode=mode; lastFocusPid=pid;
+  renderSheet();
+  sheet.hidden=false; overlay.hidden=false;
+  document.body.classList.add('lock'); app.inert=true; nav.inert=true;
+  if(first){ sheetBody.scrollTop=0; $('sheetClose').focus({preventScroll:true}); }
+}
+function closeSheet(){
+  if(openPid===null) return;
+  openPid=null; sheet.hidden=true; overlay.hidden=true; sheetBody.innerHTML='';
+  document.body.classList.remove('lock'); app.inert=false; nav.inert=false;
+  const el=app.querySelector('[data-open="'+lastFocusPid+'"]'); if(el) el.focus({preventScroll:true});
+}
+function parseHash(){ const h=(location.hash||'#parent').slice(1).split('/'); return {view:ALIAS[h[0]]||h[0]||'parent',arg:h[1]||null}; }
+function route(){
+  const r=parseHash(), view=VIEWS.includes(r.view)?r.view:'parent';
+  if(view!==cur.view){ if(view!=='demo') cur.prev=view; renderMain(view); window.scrollTo(0,0); }
+  cur.view=view;
+  const p=r.arg?getP(r.arg):null;
+  if(view==='admin'&&p) openSheet(p.id,'admin');
+  else if(view==='coach'&&p&&p.role==='child'&&inMyGroup(p)) openSheet(p.id,'coachedit');
+  else closeSheet();
+}
+function selOf(el){
+  if(!el||el===document.body) return null;
+  if(el.id) return '#'+el.id;
+  let s=el.tagName.toLowerCase();
+  for(const k in el.dataset) s+='[data-'+k.replace(/[A-Z]/g,c=>'-'+c.toLowerCase())+'="'+el.dataset[k]+'"]';
+  return s==='button'||s==='select'||s==='a'?null:s;
+}
+function refresh(){
+  const y=window.scrollY, active=document.activeElement, sel=selOf(active), inSheet=sheet.contains(active);
+  const keep=[...document.querySelectorAll('details[data-k][open]')].map(d=>d.dataset.k).filter(k=>k!=='pick');
+  renderMain(cur.view);
+  if(openPid!==null) renderSheet();
+  keep.forEach(k=>document.querySelectorAll('details[data-k="'+k+'"]').forEach(d=>{ d.open=true; }));
+  window.scrollTo(0,y);
+  if(sel){ const el=(inSheet?sheet:app).querySelector(sel); if(el&&!el.disabled) el.focus({preventScroll:true}); }
+}
+
+/* ---------- confirmation toast: Undo (when there is something to undo) and OK ---------- */
+let undoSnap=null, toastTimer=null;
+function hideToast(){ clearTimeout(toastTimer); toastEl.hidden=true; undoSnap=null; }
+function toast(msg,snap){
+  undoSnap=snap;
+  $('toastMsg').textContent=msg;
+  $('toastUndo').hidden=!snap;
+  toastEl.hidden=false;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(hideToast,8000);        // still clears itself if nobody taps OK
+}
+$('toastUndo').addEventListener('click',()=>{ if(undoSnap){ data=JSON.parse(undoSnap); save(); } hideToast(); refresh(); });
+$('toastOk').addEventListener('click',()=>{ hideToast(); if(openPid!==null) $('sheetClose').focus({preventScroll:true}); });
+
+/* ---------- events ---------- */
+function closeFromUi(){ if(cameFromList){ cameFromList=false; history.back(); } else location.hash='#'+cur.view; }
+$('sheetClose').addEventListener('click',closeFromUi);
+overlay.addEventListener('click',closeFromUi);
+document.addEventListener('keydown',e=>{
+  if(openPid===null) return;
+  if(e.key==='Escape'){ e.preventDefault(); closeFromUi(); return; }
+  if(e.key==='Tab'){   // keep focus inside the pop-out (and the toast buttons while a toast is showing)
+    let f=[...sheet.querySelectorAll('button:not([disabled]),select,summary,a[href]')];
+    if(!toastEl.hidden) f=f.concat([...toastEl.querySelectorAll('button:not([hidden])')]);
+    if(!f.length) return;
+    const first=f[0], last=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey&&document.activeElement===last){ e.preventDefault(); first.focus(); }
+  }
+});
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act],[data-open],[data-filter],[data-atab]');
+  if(!t) return;
+  if(t.hasAttribute('data-open')){ cameFromList=true; return; }     // normal link; the hash change opens the pop-out
+  if(t.hasAttribute('data-atab')){ ui.tab=t.dataset.atab; refresh(); return; }
+  if(t.hasAttribute('data-filter')){ const kv=t.dataset.filter.split('|'); ui[kv[0]]=kv[1]; refresh(); return; }
+  const act=t.dataset.act, n=now(), snap=JSON.stringify(data), p=getP(t.dataset.id);
+  let msg=null;
+
+  if(act==='skill'&&p){
+    const lv=+t.dataset.lv, i=+t.dataset.i, val=t.dataset.val;
+    if(lv!==p.level&&lv!==p.level+1) return;
+    if(val==='none') delete p.skills[skillKey(lv,i)]; else p.skills[skillKey(lv,i)]=val;
+    msg=`${p.name}: ${LEVELS[lv-1].skills[i]} → ${val==='none'?'not yet':val}.`;
+  }
+  else if(act==='complete'&&p){
+    if(!ready(p)) return;
+    const done=p.level; completeLevel(p,n);
+    msg=`${p.name}: Level ${done} completed${done<6?'. Now working on Level '+p.level+'.':'.'}`;
+  }
+  else if(act==='cert'&&p){
+    const id=t.dataset.cert, v=t.dataset.val, s=certState(p,id,n);
+    if(v==='clear'){
+      delete p.certs[id];
+      if(CERT[id].tier){ for(let j=CERT[id].tier+1;j<=3;j++) delete p.certs['t'+j]; }
+      msg=`${p.name}: ${CERT[id].name} removed.`;
+    } else {
+      if(s.state==='blocked') return;
+      p.certs[id]={status:v,date:v==='done'?iso(n):null};
+      resolvePending(p.id,'cert',id);
+      msg=`${p.name}: ${CERT[id].name}${v==='done'?' recorded as achieved today.':' marked as learning.'}`;
+    }
+  }
+  else if(act==='req-approve'||act==='req-decline'){
+    const r=data.requests.find(x=>x.id===t.dataset.rid);
+    if(!r||r.status!=='pending') return;
+    const rp=getP(r.pid);
+    if(act==='req-approve'){
+      if(r.kind==='level'){ if(!ready(rp)) return; completeLevel(rp,n); }
+      else if(r.kind==='cert'){ if(certState(rp,r.target,n).state!=='none') return; rp.certs[r.target]={status:'learning',date:null}; }
+      else rp.group=r.target;
+      r.status='approved'; r.decided=iso(n);
+      msg=r.kind==='move'?`${rp.name} moved to ${G(r.target).name}.`:`Approved for ${rp.name}.`;
+    } else { r.status='declined'; r.decided=iso(n); msg=`Declined for ${rp.name}.`; }
+  }
+  else if(act==='req-send'&&p){
+    const sel=$('reqSel'); if(!sel||!sel.value) return;
+    const parts=sel.value.split('|');
+    data.requests.push({id:'r'+(data.nextReq++),pid:p.id,kind:parts[0],target:parts[1],created:iso(n),status:'pending'});
+    msg=p.role==='coach'?'Request saved for the Club Admin view (demo: nothing was emailed).':'Request saved for your coach and the Club Admin view (demo: nothing was emailed).';
+  }
+  else if(act==='move-send'&&p){
+    const sel=$('moveSel'); if(!sel||!sel.value||pendingMove(p)) return;
+    data.requests.push({id:'r'+(data.nextReq++),pid:p.id,kind:'move',target:sel.value,from:p.group,by:data.meCoach,created:iso(n),status:'pending'});
+    msg='Move recommendation saved for the club admin (demo: nothing was emailed).';
+  }
+  else if(act==='query'){ const box=$('queryMsg'); box.hidden=false; box.focus({preventScroll:false}); return; }   // deliberately sends and stores nothing
+  else if(act==='query-ok'){ $('queryMsg').hidden=true; const qb=document.querySelector('[data-act="query"]'); if(qb) qb.focus({preventScroll:true}); return; }
+  else if(act==='clock'){ const k=parseInt(t.dataset.n,10); data.offset=k===0?0:data.offset+k; msg='Demo date moved.'; }
+  else if(act==='demo-back'){ location.hash='#'+cur.prev; return; }
+  else if(act==='reset'){ data=seed(); save(); toast('Sample data reset.',null); refresh(); return; }
+  else return;
+
+  save(); toast(msg,snap); refresh();
+});
+
+document.addEventListener('change',e=>{
+  const el=e.target, d=el.dataset, snap=JSON.stringify(data), n=now();
+  if(d.me){ data[d.me]=el.value; save(); refresh(); return; }
+  if(d.fgroup){ ui[d.fgroup]=el.value; refresh(); return; }
+  if(d.setGroup){ const p=getP(d.setGroup); p.group=el.value; resolvePending(p.id,'move',el.value); save(); toast(`${p.name} moved to ${G(el.value).name}.`,snap); refresh(); return; }
+  if(d.setAssist){
+    const q=getP(d.setAssist), v=el.value||null;
+    if(v&&!assistEval(q,G(v),n).meets){ refresh(); return; }
+    q.assists=v; save(); toast(v?`${q.name} now assists ${G(v).name}.`:`${q.name} no longer assists a group.`,snap); refresh();
+  }
+});
+window.addEventListener('hashchange',route);
+
+/* ---------- start ---------- */
+data=load();
+// Hash links: set location.hash directly so they also work inside a sandboxed srcdoc preview.
+document.addEventListener('click',e=>{ const a=e.target.closest('a[href^="#"]'); if(a){ e.preventDefault(); location.hash=a.getAttribute('href'); } });
+route();
+})();
+</script>
+</body>
+</html>
