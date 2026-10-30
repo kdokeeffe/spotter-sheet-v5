@@ -602,7 +602,7 @@ function viewParent(){
     :f.level==='above'?`${p.name}’s level (${lv}) is above this group’s range (${range}). They may be ready for a more advanced group.`
     :`${p.name}’s level (${lv}) is below this group’s range (${range}). This group may be a stretch for now.`;
   const as=`Age ${f.a} is ${f.age==='within'?'inside':'outside'} the group’s age range (${g.minA}–${g.maxA}).`;
-  let h=`<h2> of the club.</p>${picker('parent')}`;
+  let h=`<h2> Your view as an attendee of the club (or a parent).</p>${picker('parent')}`;
   h+=`<section class="card"><div class="rowtop"><div><div class="name" style="font-size:1.25rem">${esc(p.name)}</div><div class="meta">Age ${f.a} · ${esc(g.name)}</div></div>${levelChip(p.level)}</div></section>`;
   h+=learningCard(p)+levelSection(p,'view')+askCard(p,n);
   h+=`<section class="card"><h3 class="sec">My group</h3><div class="name" style="font-size:1.25rem">${esc(g.name)}</div><div class="meta">${range} · ages ${g.minA}–${g.maxA} (sample)</div><div class="meta" style="margin-top:6px">${plural(inGroup,'child')} in this group today.</div></section>`;
